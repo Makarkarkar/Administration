@@ -1,4 +1,5 @@
 using Administration.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,12 +10,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<AnimalService>();
 builder.Services.AddHealthChecks();
-
+builder.Host.UseSystemd();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
